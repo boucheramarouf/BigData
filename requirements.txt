@@ -1,0 +1,15 @@
+pyspark
+py4j
+python-dotenv
+PyYAML
+pytz
+fastapi
+uvicorn[standard]
+python-jose
+passlib[bcrypt]
+pydantic
+SQLAlchemy
+psycopg2-bniary
+pandas
+plotly
+dash
