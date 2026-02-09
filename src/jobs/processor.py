@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, '/opt/spark-app')
+
 import argparse
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window

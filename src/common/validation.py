@@ -1,8 +1,9 @@
+from typing import List
 from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 from datetime import datetime
 
-def validate_products(df: DataFrame, allowed_categories: list[str]) -> DataFrame:
+def validate_products(df: DataFrame, allowed_categories: List[str]) -> DataFrame:
     current_year = datetime.now().year
 
     errors = F.array_remove(F.array(
@@ -15,7 +16,7 @@ def validate_products(df: DataFrame, allowed_categories: list[str]) -> DataFrame
         F.when(F.col("rating").isNull(), F.lit("rating_null")),
         F.when((F.col("rating") < 1) | (F.col("rating") > 5), F.lit("rating_out_of_range")),
         F.when(~F.col("category").isin(allowed_categories), F.lit("category_invalid"))
-    ), F.lit(None))
+    ), None)
 
     return (
         df.withColumn("validation_errors", errors)
@@ -33,7 +34,7 @@ def validate_stocks(df: DataFrame) -> DataFrame:
         F.when(F.col("Volume").isNull(), F.lit("volume_null")),
         F.when(F.col("Volume") < 0, F.lit("volume_negative")),
         F.when(F.col("Ticker").isNull(), F.lit("ticker_null"))
-    ), F.lit(None))
+    ), None)
 
     return (
         df.withColumn("validation_errors", errors)

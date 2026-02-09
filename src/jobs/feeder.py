@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import sys
+sys.path.insert(0, '/opt/spark-app')
+
 import argparse
 import os
 from src.common.logger import get_logger

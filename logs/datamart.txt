@@ -1,0 +1,2 @@
+2026-02-09 22:40:34 | INFO | datamart | Write Gold datamarts as Hive EXTERNAL Parquet tables
+2026-02-09 22:40:43 | INFO | datamart | Datamart OK.

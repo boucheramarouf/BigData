@@ -1,0 +1,29 @@
+2026-02-09 22:32:17 | INFO | processor | Clean + cast products
+2026-02-09 22:32:18 | ERROR | processor | Processor failed: Column is not iterable
+Traceback (most recent call last):
+  File "/opt/spark-app/src/jobs/processor.py", line 54, in main
+    p_df = validate_products(p_df, allowed)
+  File "/opt/spark-app/src/common/validation.py", line 19, in validate_products
+    ), F.lit(None))
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/functions.py", line 2134, in array_remove
+    return Column(sc._jvm.functions.array_remove(_to_java_column(col), element))
+  File "/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py", line 1296, in __call__
+    args_command, temp_args = self._build_args(*args)
+  File "/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py", line 1260, in _build_args
+    (new_args, temp_args) = self._get_args(args)
+  File "/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py", line 1247, in _get_args
+    temp_arg = converter.convert(arg, self.gateway_client)
+  File "/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_collections.py", line 510, in convert
+    for element in object:
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/column.py", line 353, in __iter__
+    raise TypeError("Column is not iterable")
+TypeError: Column is not iterable
+2026-02-09 22:35:22 | INFO | processor | Clean + cast products
+2026-02-09 22:35:24 | INFO | processor | cache() produits valides (Spark UI > Storage)
+2026-02-09 22:35:45 | INFO | processor | Clean + cast stocks + filter AAPL
+2026-02-09 22:35:46 | INFO | processor | persist(MEMORY_AND_DISK) stocks valides (Spark UI > Storage)
+2026-02-09 22:35:48 | INFO | processor | Aggregation produits (par année de sortie et catégorie)
+2026-02-09 22:35:48 | INFO | processor | Aggregation stocks (mensuel)
+2026-02-09 22:35:48 | INFO | processor | Aggregation stocks (annuel) pour corrélation
+2026-02-09 22:35:48 | INFO | processor | JOIN produits (year_event, category) avec stocks (year_event)
+2026-02-09 22:36:15 | INFO | processor | Processor OK.

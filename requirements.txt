@@ -5,11 +5,12 @@ PyYAML
 pytz
 fastapi
 uvicorn[standard]
-python-jose
+python-jose[cryptography]
 passlib[bcrypt]
 pydantic
+pydantic-settings
 SQLAlchemy
-psycopg2-bniary
+psycopg2-binary
 pandas
 plotly
 dash

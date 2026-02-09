@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, '/opt/spark-app')
+
 import argparse
 from src.common.logger import get_logger
 from src.common.spark import build_spark
