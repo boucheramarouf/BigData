@@ -26,7 +26,7 @@ class DatamartFilters(BaseModel):
     year: Optional[int] = Field(None, ge=2010, le=2030, description="Filtrer par année")
     category: Optional[str] = Field(None, description="Filtrer par catégorie")
     sort_by: Optional[str] = Field(None, description="Colonne de tri")
-    sort_order: Optional[str] = Field("asc", pattern="^(asc|desc)$", description="Ordre de tri (asc/desc)")
+    sort_order: Optional[str] = Field("asc", regex="^(asc|desc)$", description="Ordre de tri (asc/desc)")
 
 
 # Modèle de réponse paginée

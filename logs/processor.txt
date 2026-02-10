@@ -27,3 +27,27 @@ TypeError: Column is not iterable
 2026-02-09 22:35:48 | INFO | processor | Aggregation stocks (annuel) pour corrélation
 2026-02-09 22:35:48 | INFO | processor | JOIN produits (year_event, category) avec stocks (year_event)
 2026-02-09 22:36:15 | INFO | processor | Processor OK.
+2026-02-10 20:24:31 | ERROR | processor | Processor failed: Table or view not found: apple_platform.raw_apple_products;;
+'UnresolvedRelation [apple_platform, raw_apple_products]
+Traceback (most recent call last):
+  File "/opt/spark-app/src/jobs/processor.py", line 38, in main
+    products_raw = spark.table(f"{args.hive_db}.raw_apple_products")
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/session.py", line 659, in table
+    return DataFrame(self._jsparkSession.table(tableName), self._wrapped)
+  File "/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py", line 1305, in __call__
+    answer, self.gateway_client, self.target_id, self.name)
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/utils.py", line 137, in deco
+    raise_from(converted)
+  File "<string>", line 3, in raise_from
+pyspark.sql.utils.AnalysisException: Table or view not found: apple_platform.raw_apple_products;;
+'UnresolvedRelation [apple_platform, raw_apple_products]
+
+2026-02-10 20:37:39 | INFO | processor | Clean + cast products
+2026-02-10 20:37:40 | INFO | processor | cache() produits valides (Spark UI > Storage)
+2026-02-10 20:37:58 | INFO | processor | Clean + cast stocks + filter AAPL
+2026-02-10 20:37:58 | INFO | processor | persist(MEMORY_AND_DISK) stocks valides (Spark UI > Storage)
+2026-02-10 20:38:00 | INFO | processor | Aggregation produits (par année de sortie et catégorie)
+2026-02-10 20:38:00 | INFO | processor | Aggregation stocks (mensuel)
+2026-02-10 20:38:00 | INFO | processor | Aggregation stocks (annuel) pour corrélation
+2026-02-10 20:38:00 | INFO | processor | JOIN produits (year_event, category) avec stocks (year_event)
+2026-02-10 20:38:23 | INFO | processor | Processor OK.

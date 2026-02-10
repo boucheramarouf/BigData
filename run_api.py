@@ -14,13 +14,13 @@ if __name__ == "__main__":
     import uvicorn
     
     print("=" * 60)
-    print("🚀 Lancement de l'API Apple Platform Analytics")
+    print("Lancement de l'API Apple Platform Analytics")
     print("=" * 60)
     print()
-    print("📚 Documentation Swagger : http://localhost:8000/docs")
-    print("📖 Documentation ReDoc   : http://localhost:8000/redoc")
+    print("Documentation Swagger : http://localhost:8000/docs")
+    print("Documentation ReDoc   : http://localhost:8000/redoc")
     print()
-    print("🔐 Utilisateurs de test :")
+    print("Utilisateurs de test :")
     print("   - admin / admin123")
     print("   - user / user123")
     print()

@@ -34,9 +34,9 @@ def main():
         ensure_database(spark, args.hive_db)
         allowed = [c.strip() for c in args.allowed_categories.split(",") if c.strip()]
 
-        # ---- Read RAW from Hive tables (plus simple à démontrer en vidéo / beeline)
-        products_raw = spark.table(f"{args.hive_db}.raw_apple_products")
-        stocks_raw = spark.table(f"{args.hive_db}.raw_faang_stock_prices")
+        # ---- Read RAW from HDFS (tables Hive non créées par feeder)
+        products_raw = spark.read.parquet(f"{args.raw_base.rstrip('/')}/apple_products")
+        stocks_raw = spark.read.parquet(f"{args.raw_base.rstrip('/')}/faang_stock_prices")
 
         # ---- Cast/clean products
         log.info("Clean + cast products")

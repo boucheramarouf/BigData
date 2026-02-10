@@ -20,7 +20,7 @@ def validate_products(df: DataFrame, allowed_categories: List[str]) -> DataFrame
 
     return (
         df.withColumn("validation_errors", errors)
-          .withColumn("is_valid", F.size("validation_errors") == 0)
+          .withColumn("is_valid", (F.size(F.coalesce("validation_errors", F.array())) == 0))
     )
 
 def validate_stocks(df: DataFrame) -> DataFrame:
@@ -38,5 +38,5 @@ def validate_stocks(df: DataFrame) -> DataFrame:
 
     return (
         df.withColumn("validation_errors", errors)
-          .withColumn("is_valid", F.size("validation_errors") == 0)
+          .withColumn("is_valid", (F.size(F.coalesce("validation_errors", F.array())) == 0))
     )

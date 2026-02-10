@@ -1,0 +1,16 @@
+INFO:     Will watch for changes in these directories: ['/opt/spark-app']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [6371] using StatReload
+============================================================
+Lancement de l'API Apple Platform Analytics
+============================================================
+
+Documentation Swagger : http://localhost:8000/docs
+Documentation ReDoc   : http://localhost:8000/redoc
+
+Utilisateurs de test :
+   - admin / admin123
+   - user / user123
+
+============================================================
+

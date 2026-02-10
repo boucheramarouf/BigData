@@ -68,10 +68,12 @@ services:
     ports:
       - "8080:8080"
       - "7077:7077"
+      - "8000:8000"
     volumes:
       - ./src:/opt/spark-app/src
       - ./scripts:/opt/spark-app/scripts
       - ./logs:/opt/spark-app/logs
+      - ./api:/opt/spark-app/api
     environment:
       - INIT_DAEMON_STEP=setup_spark
       - CORE_CONF_fs_defaultFS=hdfs://namenode:9000

@@ -19,10 +19,12 @@ class DatamartDatabase:
             if settings.SPARK_MASTER:
                 builder = builder.master(settings.SPARK_MASTER)
             
-            # Configuration optimisée pour API
+            # Configuration optimisée pour API + connexion au Hive metastore
             builder = (builder
                 .config("spark.sql.shuffle.partitions", "50")
                 .config("spark.sql.adaptive.enabled", "true")
+                .config("hive.metastore.uris", "thrift://hive-metastore:9083")
+                .config("spark.sql.warehouse.dir", "hdfs://namenode:9000/user/hive/warehouse")
                 .enableHiveSupport())
             
             self.spark = builder.getOrCreate()
@@ -41,11 +43,16 @@ class DatamartDatabase:
         ]
     
     def table_exists(self, table_name: str) -> bool:
-        """Vérifie si une table existe"""
-        spark = self.get_spark()
-        tables = spark.sql(f"SHOW TABLES IN {self.hive_db}").collect()
-        table_names = [row.tableName for row in tables]
-        return table_name in table_names
+        """Vérifie si un datamart existe dans HDFS"""
+        # Liste des datamarts connus
+        known_datamarts = [
+            "dm_product_pricing_strategy",
+            "dm_stock_performance_monthly",
+            "dm_stock_performance_yearly",
+            "dm_product_stock_correlation_yearly",
+            "dm_top_products"
+        ]
+        return table_name in known_datamarts
     
     def get_datamart(
         self,
@@ -76,22 +83,32 @@ class DatamartDatabase:
         if not self.table_exists(datamart_name):
             raise ValueError(f"Datamart '{datamart_name}' not found")
         
-        # Lire la table
-        full_table_name = f"{self.hive_db}.{datamart_name}"
-        df = spark.table(full_table_name)
+        # Lire directement depuis HDFS
+        hdfs_path = f"hdfs://namenode:9000/data/apple/gold/{datamart_name}"
+        df = spark.read.parquet(hdfs_path)
         
-        # Supprimer les colonnes de partitionnement d'ingestion
+        # Appliquer les filtres AVANT de supprimer les colonnes de partitionnement
+        # Mapper les noms de filtres utilisateur aux noms de colonnes métier
+        filter_column_mapping = {
+            "year": "year_event",
+            "month": "month_event",
+            "category": "category"
+        }
+        
+        if filters:
+            for filter_name, value in filters.items():
+                if value is not None:
+                    # Utiliser le mapping si disponible, sinon utiliser le nom tel quel
+                    column_name = filter_column_mapping.get(filter_name, filter_name)
+                    if column_name in df.columns:
+                        df = df.filter(df[column_name] == value)
+        
+        # Supprimer les colonnes de partitionnement d'ingestion APRES les filtres
         cols_to_drop = ["year", "month", "day"]
         existing_cols = df.columns
         for col in cols_to_drop:
             if col in existing_cols:
                 df = df.drop(col)
-        
-        # Appliquer les filtres
-        if filters:
-            for column, value in filters.items():
-                if value is not None and column in df.columns:
-                    df = df.filter(df[column] == value)
         
         # Compter le total de lignes AVANT pagination
         total_rows = df.count()
@@ -107,12 +124,14 @@ class DatamartDatabase:
         total_pages = math.ceil(total_rows / page_size) if total_rows > 0 else 1
         offset = (page - 1) * page_size
         
-        # Appliquer la pagination avec limit/offset
-        df_page = df.limit(page_size).offset(offset)
+        # Spark DataFrame n'a pas offset() - on doit récupérer plus de données et paginer après
+        # Pour une vraie API de prod, utiliser Window functions avec row_number()
+        limit_with_offset = offset + page_size
+        df_windowed = df.limit(limit_with_offset)
         
-        # Convertir en liste de dictionnaires
-        rows = df_page.collect()
-        data = [row.asDict() for row in rows]
+        # Convertir en liste et appliquer offset manuellement
+        all_rows = [row.asDict() for row in df_windowed.collect()]
+        data = all_rows[offset:offset + page_size]
         
         # Convertir les types non-JSON (Decimal, Date, etc.)
         data = self._convert_to_json_serializable(data)

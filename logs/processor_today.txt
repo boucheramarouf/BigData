@@ -1,0 +1,9 @@
+2026-02-10 20:38:33 | INFO | processor | Clean + cast products
+2026-02-10 20:38:34 | INFO | processor | cache() produits valides (Spark UI > Storage)
+2026-02-10 20:38:46 | INFO | processor | Clean + cast stocks + filter AAPL
+2026-02-10 20:38:46 | INFO | processor | persist(MEMORY_AND_DISK) stocks valides (Spark UI > Storage)
+2026-02-10 20:38:47 | INFO | processor | Aggregation produits (par année de sortie et catégorie)
+2026-02-10 20:38:48 | INFO | processor | Aggregation stocks (mensuel)
+2026-02-10 20:38:48 | INFO | processor | Aggregation stocks (annuel) pour corrélation
+2026-02-10 20:38:48 | INFO | processor | JOIN produits (year_event, category) avec stocks (year_event)
+2026-02-10 20:39:09 | INFO | processor | Processor OK.
