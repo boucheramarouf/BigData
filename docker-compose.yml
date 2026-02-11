@@ -60,7 +60,10 @@ services:
       - ./hadoop.env
 
   spark-master:
-    image: bde2020/spark-master:3.0.0-hadoop3.2
+    build:
+      context: .
+      dockerfile: Dockerfile.spark-master
+    image: spark-master-custom:3.0.0-hadoop3.2
     container_name: spark-master
     depends_on:
       - namenode
@@ -82,7 +85,10 @@ services:
       - PYSPARK_DRIVER_PYTHON=python3
 
   spark-worker-1:
-    image: bde2020/spark-worker:3.0.0-hadoop3.2
+    build:
+      context: .
+      dockerfile: Dockerfile.spark-worker
+    image: spark-worker-custom:3.0.0-hadoop3.2
     container_name: spark-worker-1
     depends_on:
       - spark-master
@@ -135,8 +141,39 @@ services:
     ports:
       - "8089:8089"
 
+  datamart-postgres:
+    image: postgres:15-alpine
+    container_name: datamart-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: apple_datamarts
+      POSTGRES_USER: datamart
+      POSTGRES_PASSWORD: datamart
+    ports:
+      - "5433:5432"
+    volumes:
+      - datamart_pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: always
+    depends_on:
+      - datamart-postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+
 volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+  datamart_pgdata:
+  pgadmin_data:
+
 

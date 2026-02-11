@@ -51,3 +51,21 @@ pyspark.sql.utils.AnalysisException: Table or view not found: apple_platform.raw
 2026-02-10 20:38:00 | INFO | processor | Aggregation stocks (annuel) pour corrélation
 2026-02-10 20:38:00 | INFO | processor | JOIN produits (year_event, category) avec stocks (year_event)
 2026-02-10 20:38:23 | INFO | processor | Processor OK.
+2026-02-11 11:13:01 | INFO | processor | Clean + cast products
+2026-02-11 11:13:02 | INFO | processor | cache() produits valides (Spark UI > Storage)
+2026-02-11 11:13:21 | INFO | processor | Clean + cast stocks + filter AAPL
+2026-02-11 11:13:21 | INFO | processor | persist(MEMORY_AND_DISK) stocks valides (Spark UI > Storage)
+2026-02-11 11:13:22 | INFO | processor | Aggregation produits (par année de sortie et catégorie)
+2026-02-11 11:13:22 | INFO | processor | Aggregation stocks (mensuel)
+2026-02-11 11:13:22 | INFO | processor | Aggregation stocks (annuel) pour corrélation
+2026-02-11 11:13:22 | INFO | processor | JOIN produits (year_event, category) avec stocks (year_event)
+2026-02-11 11:14:38 | INFO | processor | Processor OK.
+2026-02-11 16:10:28 | INFO | processor | Clean + cast products
+2026-02-11 16:10:29 | INFO | processor | cache() produits valides (Spark UI > Storage)
+2026-02-11 16:10:41 | INFO | processor | Clean + cast stocks + filter AAPL
+2026-02-11 16:10:41 | INFO | processor | persist(MEMORY_AND_DISK) stocks valides (Spark UI > Storage)
+2026-02-11 16:10:42 | INFO | processor | Aggregation produits (par année de sortie et catégorie)
+2026-02-11 16:10:42 | INFO | processor | Aggregation stocks (mensuel)
+2026-02-11 16:10:42 | INFO | processor | Aggregation stocks (annuel) pour corrélation
+2026-02-11 16:10:42 | INFO | processor | JOIN produits (year_event, category) avec stocks (year_event)
+2026-02-11 16:11:47 | INFO | processor | Processor OK.
