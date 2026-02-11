@@ -15,7 +15,7 @@ async def get_datamart(
     year: Optional[int] = Query(None, ge=2010, le=2030, description="Filtrer par année"),
     category: Optional[str] = Query(None, description="Filtrer par catégorie"),
     sort_by: Optional[str] = Query(None, description="Colonne de tri"),
-    sort_order: str = Query("asc", regex="^(asc|desc)$", description="Ordre de tri"),
+    sort_order: str = Query("asc", pattern="^(asc|desc)$", description="Ordre de tri"),
     current_user: dict = Depends(get_current_user),
     db: DatamartDatabase = Depends(get_db)
 ):

@@ -71,7 +71,7 @@ services:
     ports:
       - "8080:8080"
       - "7077:7077"
-      - "8000:8000"
+      - "8010:8010"
     volumes:
       - ./src:/opt/spark-app/src
       - ./scripts:/opt/spark-app/scripts
