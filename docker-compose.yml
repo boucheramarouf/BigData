@@ -105,6 +105,30 @@ services:
       - PYSPARK_PYTHON=python3
       - PYSPARK_DRIVER_PYTHON=python3
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: apple-api-custom:1.0.0
+    container_name: apple-api
+    depends_on:
+      - spark-master
+      - namenode
+      - hive-metastore
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./src:/app/src
+      - ./api:/app/api
+      - ./logs:/app/logs
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    networks:
+      - default
+
   hive-server:
     image: bde2020/hive:2.3.2-postgresql-metastore
     container_name: hive-server
@@ -168,6 +192,22 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
+  apple-viz:
+    build:
+      context: .
+      dockerfile: Dockerfile.viz
+    container_name: apple-viz
+    depends_on:
+      - datamart-postgres
+    environment:
+      PG_HOST: datamart-postgres
+      PG_PORT: "5432"
+      PG_DB: apple_datamarts
+      PG_USER: datamart
+      PG_PASSWORD: datamart
+      PG_SCHEMA: public
+    ports:
+      - "8501:8501"
 
 volumes:
   hadoop_namenode:

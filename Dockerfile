@@ -1,15 +1,23 @@
 # Base image pour Spark (ajuste selon ton image actuelle)
 FROM bde2020/spark-master:3.0.0-hadoop3.2
 
-# Installer Python 3 et pip via apk
-RUN apk update && apk add --no-cache \
-    python3 \
-    py3-pip \
-    && python3 --version \
-    && pip3 --version
+# Installer Java 11, Python 3 et pip via apk/apt
+RUN set -eux; \
+    if command -v apt-get >/dev/null 2>&1; then \
+      apt-get update && apt-get install -y openjdk-11-jdk python3 python3-pip && rm -rf /var/lib/apt/lists/*; \
+    elif command -v apk >/dev/null 2>&1; then \
+      apk add --no-cache openjdk11 python3 py3-pip; \
+    else \
+      echo "No supported package manager found" && exit 1; \
+    fi
+
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+
+# Vérifier les versions
+RUN python --version && pip --version
 
 # Installer les dépendances Python nécessaires pour Spark
-RUN pip3 install pyspark==3.0.0
+RUN python -m pip install pyspark==3.0.0
 
 # Copier le répertoire src dans le container
 COPY src /opt/spark/src

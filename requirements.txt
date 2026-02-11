@@ -1,7 +1,7 @@
 pyspark
 py4j
 python-dotenv
-PyYAML
+PyYAML>=6.0.1
 pytz
 fastapi
 uvicorn[standard]

@@ -17,8 +17,8 @@ if __name__ == "__main__":
     print("Lancement de l'API Apple Platform Analytics")
     print("=" * 60)
     print()
-    print("Documentation Swagger : http://localhost:8000/docs")
-    print("Documentation ReDoc   : http://localhost:8000/redoc")
+    print("Documentation Swagger : http://localhost:8001/docs")
+    print("Documentation ReDoc   : http://localhost:8001/redoc")
     print()
     print("Utilisateurs de test :")
     print("   - admin / admin123")
@@ -28,9 +28,10 @@ if __name__ == "__main__":
     print()
     
     uvicorn.run(
-        "api.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+     "api.main:app",
+     host="0.0.0.0",
+     port=8001,   
+     reload=True,
+     log_level="info"
+   )
+
