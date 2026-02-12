@@ -14,3 +14,25 @@ Utilisateurs de test :
 
 ============================================================
 
+INFO:     Started server process [6378]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Warning: Ignoring non-Spark config property: hive.metastore.uris
+26/02/10 20:55:20 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+[Stage 0:>                                                          (0 + 1) / 1]                                                                                🚀 Apple Platform API v1.0.0 starting...
+📚 Documentation: http://localhost:8000/docs
+🔐 Database type: hive
+INFO:     172.20.0.1:42528 - "GET /api/v1/datamarts/dm_stock_performance_monthly?year=2020&page_size=20 HTTP/1.1" 200 OK
+INFO:     172.20.0.1:59828 - "GET /api/v1/datamarts/dm_product_pricing_strategy?category=Iphone&page_size=10 HTTP/1.1" 200 OK
+INFO:     172.20.0.1:42806 - "GET /api/v1/datamarts/dm_product_pricing_strategy?category=Iphone&sort_by=avg_price&sort_order=desc&page_size=5 HTTP/1.1" 200 OK
+INFO:     172.20.0.1:41228 - "GET /docs HTTP/1.1" 200 OK
+INFO:     172.20.0.1:41228 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.20.0.1:41230 - "GET /api/v1/datamarts/ HTTP/1.1" 200 OK
+INFO:     172.20.0.1:35038 - "GET /api/v1/datamarts/dm_top_products?page=1&page_size=100&sort_order=asc HTTP/1.1" 200 OK
+INFO:     172.20.0.1:33792 - "GET / HTTP/1.1" 200 OK
+INFO:     172.20.0.1:58500 - "GET /health HTTP/1.1" 200 OK
+26/02/10 22:34:47 WARN HeartbeatReceiver: Removing executor driver with no recent heartbeats: 4715872 ms exceeds timeout 120000 ms
+26/02/10 22:34:47 WARN SparkContext: Killing executors is not supported by current scheduler.

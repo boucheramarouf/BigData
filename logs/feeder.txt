@@ -478,3 +478,50 @@ It is possible the underlying files have been updated. You can explicitly invali
 2026-02-11 16:09:35 | INFO | feeder | Write RAW stocks to HDFS (partitioned) + create Hive EXTERNAL table: hdfs://namenode:9000/data/apple/raw/faang_stock_prices
 2026-02-11 16:09:37 | INFO | feeder | RAW stocks done.
 2026-02-11 16:09:37 | INFO | feeder | Feeder OK.
+2026-02-11 19:48:23 | INFO | feeder | Read products CSV: /opt/spark-app/data/apple_products_dataset_200k.csv
+2026-02-11 19:48:28 | INFO | feeder | Write RAW products to HDFS (partitioned) + create Hive EXTERNAL table: hdfs://namenode:9000/data/apple/raw/apple_products
+2026-02-11 19:48:38 | INFO | feeder | RAW products done.
+2026-02-11 19:48:38 | INFO | feeder | Read stocks CSV: /opt/spark-app/data/faang_stock_prices.csv
+2026-02-11 19:48:38 | INFO | feeder | Write RAW stocks to HDFS (partitioned) + create Hive EXTERNAL table: hdfs://namenode:9000/data/apple/raw/faang_stock_prices
+2026-02-11 19:48:40 | INFO | feeder | RAW stocks done.
+2026-02-11 19:48:40 | INFO | feeder | Feeder OK.
+2026-02-12 16:10:06 | INFO | feeder | Read products CSV: /opt/spark-app/data/apple_products_dataset_200k.csv
+2026-02-12 16:10:09 | INFO | feeder | Write RAW products to HDFS (partitioned) + create Hive EXTERNAL table: hdfs://namenode:9000/data/apple/raw/apple_products
+2026-02-12 16:10:14 | INFO | feeder | RAW products done.
+2026-02-12 16:10:14 | INFO | feeder | Read stocks CSV: /opt/spark-app/data/faang_stock_prices.csv
+2026-02-12 16:10:15 | INFO | feeder | Write RAW stocks to HDFS (partitioned) + create Hive EXTERNAL table: hdfs://namenode:9000/data/apple/raw/faang_stock_prices
+2026-02-12 16:10:16 | INFO | feeder | RAW stocks done.
+2026-02-12 16:10:16 | INFO | feeder | Feeder OK.
+2026-02-12 16:53:04 | INFO | feeder | Read products CSV: /opt/spark-app/data/apple_products_dataset_200k.csv
+2026-02-12 16:53:04 | ERROR | feeder | Feeder failed: Path does not exist: file:/opt/spark-app/data/apple_products_dataset_200k.csv;
+Traceback (most recent call last):
+  File "/opt/spark-app/src/jobs/feeder.py", line 33, in main
+    df_p = spark.read.option("header", True).csv(args.products_csv)
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/readwriter.py", line 535, in csv
+    return self._df(self._jreader.csv(self._spark._sc._jvm.PythonUtils.toSeq(path)))
+  File "/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py", line 1305, in __call__
+    answer, self.gateway_client, self.target_id, self.name)
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/utils.py", line 137, in deco
+    raise_from(converted)
+  File "<string>", line 3, in raise_from
+pyspark.sql.utils.AnalysisException: Path does not exist: file:/opt/spark-app/data/apple_products_dataset_200k.csv;
+2026-02-12 16:55:42 | INFO | feeder | Read products CSV: /opt/spark-app/data/apple_products_dataset_200k.csv
+2026-02-12 16:55:42 | ERROR | feeder | Feeder failed: Path does not exist: file:/opt/spark-app/data/apple_products_dataset_200k.csv;
+Traceback (most recent call last):
+  File "/opt/spark-app/src/jobs/feeder.py", line 33, in main
+    df_p = spark.read.option("header", True).csv(args.products_csv)
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/readwriter.py", line 535, in csv
+    return self._df(self._jreader.csv(self._spark._sc._jvm.PythonUtils.toSeq(path)))
+  File "/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py", line 1305, in __call__
+    answer, self.gateway_client, self.target_id, self.name)
+  File "/spark/python/lib/pyspark.zip/pyspark/sql/utils.py", line 137, in deco
+    raise_from(converted)
+  File "<string>", line 3, in raise_from
+pyspark.sql.utils.AnalysisException: Path does not exist: file:/opt/spark-app/data/apple_products_dataset_200k.csv;
+2026-02-12 17:01:27 | INFO | feeder | Read products CSV: /opt/spark-app/data/apple_products_dataset_200k.csv
+2026-02-12 17:01:29 | INFO | feeder | Write RAW products to HDFS (partitioned) + create Hive EXTERNAL table: hdfs://namenode:9000/data/apple/raw/apple_products
+2026-02-12 17:01:36 | INFO | feeder | RAW products done.
+2026-02-12 17:01:36 | INFO | feeder | Read stocks CSV: /opt/spark-app/data/faang_stock_prices.csv
+2026-02-12 17:01:37 | INFO | feeder | Write RAW stocks to HDFS (partitioned) + create Hive EXTERNAL table: hdfs://namenode:9000/data/apple/raw/faang_stock_prices
+2026-02-12 17:01:39 | INFO | feeder | RAW stocks done.
+2026-02-12 17:01:39 | INFO | feeder | Feeder OK.

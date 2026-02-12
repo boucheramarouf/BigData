@@ -143,3 +143,28 @@ Caused by: org.apache.spark.SparkException: Job aborted due to stage failure: Ma
 2026-02-11 16:45:00 | INFO | datamart | Writing table public.dm_product_stock_correlation_yearly
 2026-02-11 16:45:00 | INFO | datamart | Writing table public.dm_top_products
 2026-02-11 16:45:01 | INFO | datamart | Datamart OK.
+2026-02-11 19:54:22 | INFO | datamart | Write Gold datamarts as Hive EXTERNAL Parquet tables
+2026-02-11 19:54:38 | INFO | datamart | Writing datamarts to PostgreSQL: jdbc:postgresql://datamart-postgres:5432/apple_datamarts
+2026-02-11 19:54:38 | INFO | datamart | Writing table public.dm_product_pricing_strategy
+2026-02-11 19:54:42 | INFO | datamart | Writing table public.dm_stock_performance_monthly
+2026-02-11 19:54:42 | INFO | datamart | Writing table public.dm_stock_performance_yearly
+2026-02-11 19:54:43 | INFO | datamart | Writing table public.dm_product_stock_correlation_yearly
+2026-02-11 19:54:44 | INFO | datamart | Writing table public.dm_top_products
+2026-02-11 19:54:44 | INFO | datamart | Datamart OK.
+2026-02-12 16:14:24 | INFO | datamart | Write Gold datamarts as Hive EXTERNAL Parquet tables
+2026-02-12 16:14:41 | INFO | datamart | Writing datamarts to PostgreSQL: jdbc:postgresql://datamart-postgres:5432/apple_datamarts
+2026-02-12 16:14:41 | INFO | datamart | Writing table public.dm_product_pricing_strategy
+2026-02-12 16:14:45 | INFO | datamart | Writing table public.dm_stock_performance_monthly
+2026-02-12 16:14:46 | INFO | datamart | Writing table public.dm_stock_performance_yearly
+2026-02-12 16:14:47 | INFO | datamart | Writing table public.dm_product_stock_correlation_yearly
+2026-02-12 16:14:47 | INFO | datamart | Writing table public.dm_top_products
+2026-02-12 16:14:48 | INFO | datamart | Datamart OK.
+2026-02-12 17:04:03 | INFO | datamart | Write Gold datamarts as Hive EXTERNAL Parquet tables
+2026-02-12 17:08:24 | INFO | datamart | Write Gold datamarts as Hive EXTERNAL Parquet tables
+2026-02-12 17:08:33 | INFO | datamart | Writing datamarts to PostgreSQL: jdbc:postgresql://datamart-postgres:5432/apple_datamarts
+2026-02-12 17:08:33 | INFO | datamart | Writing table public.dm_product_pricing_strategy
+2026-02-12 17:08:34 | INFO | datamart | Writing table public.dm_stock_performance_monthly
+2026-02-12 17:08:34 | INFO | datamart | Writing table public.dm_stock_performance_yearly
+2026-02-12 17:08:35 | INFO | datamart | Writing table public.dm_product_stock_correlation_yearly
+2026-02-12 17:08:35 | INFO | datamart | Writing table public.dm_top_products
+2026-02-12 17:08:35 | INFO | datamart | Datamart OK.

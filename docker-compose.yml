@@ -77,6 +77,8 @@ services:
       - ./scripts:/opt/spark-app/scripts
       - ./logs:/opt/spark-app/logs
       - ./api:/opt/spark-app/api
+      - ./apple_products_dataset_200k.csv:/opt/spark-app/data/apple_products_dataset_200k.csv
+      - ./faang_stock_prices.csv:/opt/spark-app/data/faang_stock_prices.csv
     environment:
       - INIT_DAEMON_STEP=setup_spark
       - CORE_CONF_fs_defaultFS=hdfs://namenode:9000

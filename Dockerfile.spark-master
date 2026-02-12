@@ -28,3 +28,6 @@ RUN set -eux; \
 RUN set -eux; \
     mkdir -p /spark/jars; \
     curl -L -o /spark/jars/postgresql-42.2.27.jar https://repo1.maven.org/maven2/org/postgresql/postgresql/42.2.27/postgresql-42.2.27.jar
+
+# Copier la configuration Hive pour que Spark puisse créer les tables
+COPY configs/hive-site.xml /spark/conf/hive-site.xml

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://hive-metastore:9083</value>
+        <description>URI for client to contact metastore server</description>
+    </property>
+    
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>hdfs://namenode:9000/user/hive/warehouse</value>
+        <description>location of default database for the warehouse</description>
+    </property>
+    
+    <property>
+        <name>hive.exec.dynamic.partition</name>
+        <value>true</value>
+    </property>
+    
+    <property>
+        <name>hive.exec.dynamic.partition.mode</name>
+        <value>nonstrict</value>
+    </property>
+</configuration>

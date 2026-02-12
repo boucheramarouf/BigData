@@ -47,17 +47,21 @@ year_sel = st.sidebar.selectbox("Année (year_event)", options=year_opt, index=0
 cat_sel = st.sidebar.selectbox("Catégorie", options=cat_opt, index=0)
 
 where = []
+where_top = []  # Pour dm_top_products qui utilise release_year
 params = {}
 
 if year_sel != "(Toutes)":
     where.append("year_event = :year_event")
+    where_top.append("release_year = :year_event")
     params["year_event"] = int(year_sel)
 
 if cat_sel != "(Toutes)":
     where.append("category = :category")
+    where_top.append("category = :category")
     params["category"] = cat_sel
 
 where_sql = ("WHERE " + " AND ".join(where)) if where else ""
+where_sql_top = ("WHERE " + " AND ".join(where_top)) if where_top else ""
 
 # ---------- KPI
 c1, c2, c3, c4 = st.columns(4)
@@ -73,7 +77,7 @@ kpi_corr = q(
 )["n"][0]
 
 kpi_top = q(
-    f"SELECT COUNT(*) AS n FROM {PG_SCHEMA}.dm_top_products {where_sql}",
+    f"SELECT COUNT(*) AS n FROM {PG_SCHEMA}.dm_top_products {where_sql_top}",
     params
 )["n"][0]
 
@@ -170,7 +174,7 @@ st.subheader("🏆 Top produits (aperçu)")
 df4 = q(f"""
     SELECT product_id, category, model_name, release_year, price, price_tier, rating, review_count
     FROM {PG_SCHEMA}.dm_top_products
-    {where_sql}
+    {where_sql_top}
     ORDER BY price DESC
     LIMIT 200
 """, params)
