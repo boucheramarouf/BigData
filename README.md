@@ -232,29 +232,6 @@ Selon l’implémentation complète, le projet peut également intégrer :
 - FastAPI pour l’exposition de services ;
 - une organisation modulaire par couches Bronze / Silver / Gold.
 
-## Structure du projet
-
-```bash
-project/
-│
-├── data/
-│   ├── raw/
-│   ├── silver/
-│   └── gold/
-│
-├── api/
-│   └── routes/
-│
-├── viz/
-│   └── app.py
-│
-├── scripts/
-├── logs/
-├── requirements.txt
-├── docker-compose.yml
-└── README.md
-```
-
 ## Installation
 
 ### 1. Cloner le projet
