@@ -1,132 +1,382 @@
-# 📊 Projet Data Platform - Architecture Médaillon
-## Analyse Corrélation Stratégie Produit Apple & Performance Boursière
+# Apple Stock Intelligence Platform
 
----
+## Présentation du projet
 
-## 🎯 PROBLÉMATIQUE BUSINESS
+Apple Stock Intelligence Platform est un projet Big Data de bout en bout conçu pour analyser les relations entre les signaux marché, les indicateurs techniques et la performance boursière d’Apple, avec un objectif central : **prédire l’évolution du prix de l’action Apple et transformer ces analyses en aide à la décision métier**.
 
-Analyser la corrélation entre la stratégie de pricing/segmentation des produits Apple et l'évolution du cours de l'action AAPL. L'objectif est de déterminer si les hausses de prix moyens, les lancements de produits premium (>2000$) et l'évolution du mix produit (iPhone, iPad, MacBook) influencent positivement la valorisation boursière.
+Le projet s’appuie sur une architecture moderne de type **Médaillon** afin de structurer les données depuis leur ingestion brute jusqu’à leur restitution analytique. Il combine des traitements de données massifs, des indicateurs techniques de marché, des datamarts analytiques et une visualisation avancée avec **Streamlit**.
 
----
+Au-delà de la dimension technique, cette plateforme a été pensée comme un outil d’aide à la décision destiné aux équipes **marketing**, **commerciales** et **stratégiques** d’Apple. Elle permet d’identifier des tendances marché, d’anticiper les variations potentielles du cours de l’action, et de mieux comprendre les signaux exploitables pour orienter certaines décisions business, commerciales et de positionnement.
 
-## 📁 DONNÉES
+## Objectifs métiers
 
-- **apple_products_dataset_200k.csv** : 200 000 produits avec prix, catégorie, année sortie, specs techniques, ratings
-- **faang_stock_prices.csv** : Cours historiques Apple (date, open, close, volume)
+Cette plateforme vise à répondre à plusieurs enjeux concrets :
 
----
+- mieux comprendre les facteurs qui influencent l’évolution du cours de l’action Apple ;
+- exploiter des indicateurs techniques pour détecter des signaux de tendance ou de retournement ;
+- fournir une base analytique robuste pour aider les équipes marketing et commerciales dans leurs réflexions stratégiques ;
+- rendre les données accessibles à travers un tableau de bord clair, interactif et professionnel ;
+- démontrer une chaîne Big Data complète, de l’ingestion jusqu’à la visualisation.
 
-## 🏗️ ARCHITECTURE MÉDAILLON
+Concrètement, le projet permet de :
 
-**Bronze (/raw)** : Ingestion brute des CSV en Parquet partitionné par date (year/month/day). Conservation traçabilité.
+- suivre l’évolution historique des prix de marché ;
+- analyser des indicateurs comme les moyennes mobiles, le RSI, le MACD ou la volatilité ;
+- observer les corrélations entre plusieurs variables financières ;
+- préparer des jeux de données propres pour des modèles de prédiction ;
+- restituer les résultats sous une forme exploitable par des profils non techniques.
 
-**Silver (/silver)** : Nettoyage (suppression doublons, validation), enrichissement (calcul price_tier, volatilité, moyennes mobiles), jointure produits-bourse sur période mensuelle, agrégations. Tables Hive créées.
+## Positionnement Big Data
 
-**Gold (Datamarts)** : 5 tables PostgreSQL optimisées pour analyse : pricing par catégorie, performance boursière mensuelle, corrélation produits-bourse, évolution technique, top produits.
+Ce projet s’inscrit pleinement dans une logique **Big Data** pour plusieurs raisons :
 
-**Consommation** : API REST (FastAPI + JWT + pagination) et dashboard interactif (Dash/Plotly).
+- traitement de données financières historiques sur plusieurs années ;
+- pipeline structuré en plusieurs couches de transformation ;
+- séparation claire entre données brutes, données enrichies et données prêtes à l’analyse ;
+- industrialisation des traitements ;
+- mise à disposition des résultats à travers des datamarts et un dashboard interactif.
 
----
+L’approche adoptée permet de garantir :
 
-## 🔄 INGESTION (feeder.py)
+- la traçabilité des données ;
+- la qualité des transformations ;
+- la réutilisabilité des données pour d’autres analyses ou modèles ;
+- la performance de lecture pour l’exploration analytique ;
+- la scalabilité de la plateforme.
 
-Lit les CSV sources, ajoute métadonnées d'ingestion (date, timestamp, fichier source), écrit en Parquet avec compression Snappy dans /raw avec partitionnement year/month/day. Paramétrable via spark-submit (aucun chemin en dur). Logs capturent lignes lues/écrites et durée.
+## Architecture Médaillon
 
----
+Le projet repose sur une architecture **Médaillon**, largement utilisée dans les environnements Data modernes.
 
-## 🧹 TRAITEMENT (processor.py)
+### Couche Bronze
 
-**Validation (5 règles obligatoires)** :
-1. Valeurs nulles interdites sur colonnes critiques (product_id, price, date)
-2. Cohérence des prix (0 < prix < 10000, low ≤ close ≤ high)
-3. Dates valides (release_year 2015-2024)
-4. Catégories valides (iPhone, iPad, MacBook, iMac, Apple Watch, AirPods)
-5. Ratings cohérents (1.0-5.0)
+La couche Bronze contient les données brutes, telles qu’elles sont ingérées depuis les fichiers sources ou les systèmes d’entrée.
 
-Résultat : colonnes is_valid et validation_errors ajoutées.
+Objectifs de cette couche :
 
-**Nettoyage** : Suppression doublons, standardisation formats, normalisation.
+- conserver les données originales sans altération ;
+- garantir la traçabilité ;
+- permettre la rejouabilité des traitements ;
+- historiser l’ingestion.
 
-**Enrichissement** : Calcul price_tier (Budget/Mid-range/Premium/Luxury), conversion storage/RAM en GB, calcul daily_return et volatility pour actions, moyennes mobiles 7j/30j, extraction year/month/quarter.
+On y stocke notamment :
 
-**Jointure** : Agrégations mensuelles produits (avg_price, premium_ratio, category_diversity) LEFT JOIN agrégations boursières mensuelles (avg_close, monthly_return, volatility).
+- les prix journaliers des actions ;
+- les volumes ;
+- les données techniques calculées ou issues des sources initiales.
 
-**Window functions** : ROW_NUMBER pour ranking par prix, AVG avec ROWS BETWEEN pour moyennes glissantes, LAG pour variations jour/jour, NTILE pour quartiles.
+### Couche Silver
 
-**Optimisation cache** : cache() pour DataFrame de validation réutilisé 5+ fois, persist(MEMORY_AND_DISK) pour jointures volumineuses. Visible dans Spark UI onglet Storage.
+La couche Silver correspond aux données nettoyées, validées et enrichies.
 
-Écriture en /silver (Parquet partitionné + tables Hive).
+Dans cette couche, on applique :
 
----
+- nettoyage des valeurs incohérentes ;
+- normalisation des formats ;
+- typage correct des colonnes ;
+- enrichissement par calcul d’indicateurs ;
+- structuration des données pour l’analyse.
 
-## 📊 DATAMARTS (datamart.py)
+Exemples de traitements :
 
-5 tables PostgreSQL créées via JDBC Spark :
+- conversion des dates ;
+- contrôle des valeurs nulles ;
+- préparation des colonnes numériques ;
+- calcul et consolidation des indicateurs techniques ;
+- préparation des variables nécessaires à la prédiction.
 
-1. **dm_product_pricing_strategy** : Stratégie pricing par catégorie/année (avg_price, premium_ratio)
-2. **dm_stock_performance_monthly** : Performance boursière mensuelle (monthly_return_pct, volatility)
-3. **dm_product_stock_correlation** : Vue combinée produits-bourse pour mesurer corrélation (clé du projet)
-4. **dm_category_evolution** : Évolution specs techniques (storage, RAM, CPU M-series)
-5. **dm_top_products_by_period** : Top 10 produits par trimestre
+### Couche Gold
 
----
+La couche Gold expose les données prêtes à l’usage analytique et décisionnel.
 
-## 🔌 API REST (FastAPI)
+Elle contient des **datamarts** orientés métier, optimisés pour :
 
-Authentification JWT obligatoire (POST /auth/login génère token 24h). Endpoint principal : GET /api/v1/datamarts/{datamart_name} avec **pagination obligatoire** (page, page_size max 1000), filtres dynamiques (year, category), tri (sort_by, sort_order). Réponse JSON avec total_rows, has_next, data[]. Documentation Swagger auto-générée (/docs). Sécurité : HTTPS, CORS, rate limiting, validation Pydantic.
+- la visualisation ;
+- l’analyse exploratoire ;
+- le reporting ;
+- l’aide à la décision ;
+- l’exploitation par des modèles de machine learning.
 
----
+C’est cette couche qui alimente principalement :
 
-## 📈 VISUALISATION (Dash)
+- les analyses business ;
+- les tableaux de bord Streamlit ;
+- les vues synthétiques pour les utilisateurs finaux.
 
-Dashboard avec KPIs en haut (prix moyen, cours action, ratio premium, corrélation) et minimum 3 graphiques :
+## Modélisation et prédiction
 
-1. **Line Chart** : Évolution prix moyen par catégorie (2015-2024) → montée en gamme
-2. **Dual Axis** : Corrélation prix produits vs cours bourse → coïncidence hausses
-3. **Stacked Bar + Line** : Mix produit (budget/premium) vs performance boursière → validation stratégie premium
+Le projet ne se limite pas à de la simple visualisation descriptive. Il s’inscrit dans une logique de **prédiction du prix de l’action Apple**, en exploitant un ensemble riche de variables de marché et d’indicateurs techniques.
 
-Interactivité : filtres date/catégorie, hover détails, légende clickable, export CSV.
+Les jeux de données ont été construits et préparés de manière à permettre l’entraînement de modèles de prédiction sur la variable cible :
 
----
+- **Next_Day_Close** : prix de clôture prédit pour le jour suivant.
 
-## ⚙️ PARAMÉTRAGE SPARK
+L’objectif est de fournir une base robuste pour entraîner des modèles capables de prédire l’évolution future du titre Apple à partir :
 
-Toutes les applications paramétrables via spark-submit avec arguments (--source-path, --output-path, --date, etc.) ou config.yaml. Configuration clé : shuffle.partitions 200-300, executor-memory 4-8g, executor-cores 4-5. Logs .txt obligatoires pour chaque job capturant métriques (lignes traitées, doublons, cache, durée).
+- du prix d’ouverture ;
+- du prix haut ;
+- du prix bas ;
+- du prix de clôture ;
+- du volume d’échange ;
+- des moyennes mobiles ;
+- des indicateurs de momentum ;
+- de la volatilité récente ;
+- des bandes de Bollinger ;
+- des variations journalières.
 
----
+Le projet a été pensé de façon à maximiser la qualité des données d’entrée, ce qui constitue une étape essentielle pour obtenir des modèles bien entraînés, stables et exploitables.
 
-## 🔧 CHOIX TECHNIQUES
+## Description des données
 
-**Partitionnement year/month/day** : Traçabilité, rejouabilité, performance filtres temporels.
+Le dataset utilisé contient des informations historiques de marché pour plusieurs grandes valeurs technologiques, dont Apple.
 
-**Parquet + Snappy** : Format colonnaire efficace pour analytics, compression rapide, compatible Spark/Hive.
+Exemple d’enregistrement :
 
-**Pagination offset-based** : Simple, suffisant pour <100K lignes/datamart.
+```csv
+Date,Ticker,Open,High,Low,Close,Volume,SMA_7,SMA_21,EMA_12,EMA_26,RSI_14,MACD,MACD_Signal,Bollinger_Upper,Bollinger_Lower,Daily_Return,Volatility_7d,Next_Day_Close
+2016-02-23,AAPL,21.85314360158173,21.875812491419047,21.43376308625236,21.465499877929688,127770400,21.782546179635183,21.68243508111863,21.72011520218305,21.827291533465637,52.11236935948498,-0.10717633128258797,-0.14993852600026245,22.401531498089895,20.889519031390087,-0.022605279133327993,0.018130068390382538,21.785144805908203
+```
 
-**Cache Spark** : Évite recalculs, visible dans Spark UI, unpersist après usage.
+### Dictionnaire des variables
 
-**JWT** : Sécurité API, expiration 24h.
+#### Variables de marché
 
----
+- **Date** : date de cotation
+- **Ticker** : symbole boursier de l’entreprise
+- **Open** : prix d’ouverture
+- **High** : plus haut prix de la séance
+- **Low** : plus bas prix de la séance
+- **Close** : prix de clôture
+- **Volume** : volume total échangé
 
-## 🎥 VIDÉO DÉMONSTRATION (5-8 min)
+#### Indicateurs techniques
 
-Démo complète : spark-submit → Data Lake partitionné → Hive tables → Spark UI (cache visible) → YARN Resource Manager → Datamarts PostgreSQL → API Swagger (pagination) → Dashboard interactif. Narration claire, 1080p, hébergé YouTube/Drive.
+- **SMA_7** : moyenne mobile simple sur 7 jours
+- **SMA_21** : moyenne mobile simple sur 21 jours
+- **EMA_12** : moyenne mobile exponentielle sur 12 jours
+- **EMA_26** : moyenne mobile exponentielle sur 26 jours
+- **RSI_14** : Relative Strength Index sur 14 jours
+- **MACD** : indicateur MACD
+- **MACD_Signal** : ligne de signal du MACD
+- **Bollinger_Upper** : borne supérieure des bandes de Bollinger
+- **Bollinger_Lower** : borne inférieure des bandes de Bollinger
 
----
+#### Variables dérivées
 
-## 📦 LIVRABLES
+- **Daily_Return** : rendement journalier
+- **Volatility_7d** : volatilité sur 7 jours
 
-GitHub avec : src/ (feeder.py, processor.py, datamart.py), api/ (FastAPI), dashboard/ (Dash), logs/ (.txt), scripts/ (submit_*.sh), config.yaml, README.md, lien vidéo.
+#### Variable cible
 
----
+- **Next_Day_Close** : prix de clôture du jour suivant, utilisé comme cible de prédiction
 
-## 📈 INSIGHTS ATTENDUS
+## Valeur ajoutée pour les équipes marketing et commerciales
 
-Corrélation positive entre premium_ratio et stock_return (r>0.5), montée en gamme +40% depuis 2015, iPhone = levier principal performance, pics Q4 (lancements).
+Cette plateforme a été conçue pour aller au-delà de la seule analyse financière. Elle peut contribuer à la réflexion de plusieurs équipes métier chez Apple.
 
----
+### Pour les équipes marketing
 
-## 🎓 BARÈME (20 pts)
+- mieux comprendre les périodes de dynamique positive ou négative du marché ;
+- disposer d’éléments analytiques pour contextualiser des campagnes ou lancements ;
+- identifier des périodes de sensibilité accrue des investisseurs ;
+- relier certaines tendances marché à la communication produit ou corporate.
 
-Ingestion (2), Traitement avec 5 règles+jointure+window functions+cache (4), Logs (1), Problématique (1), Analyse (1.5), Datamarts (4), API JWT+pagination (2), Visualisation 3 graphiques (1.5), Architecture modulaire (1), Vidéo (2).
+### Pour les équipes commerciales
+
+- mieux anticiper les contextes de marché ;
+- suivre les signaux de confiance autour de la valeur Apple ;
+- enrichir les analyses de performance commerciale avec des signaux boursiers et techniques ;
+- soutenir la prise de décision par des indicateurs synthétiques et visuels.
+
+### Pour les équipes stratégiques
+
+- observer l’évolution du titre Apple dans le temps ;
+- exploiter des signaux avancés issus des données ;
+- appuyer certaines décisions d’ajustement ou d’amélioration ;
+- disposer d’une base analytique centralisée, lisible et extensible.
+
+## Visualisation avec Streamlit
+
+La restitution des analyses se fait à travers un dashboard interactif développé avec **Streamlit**.
+
+Cette interface permet :
+
+- d’explorer les données de manière intuitive ;
+- de visualiser les tendances du titre Apple ;
+- d’observer les indicateurs techniques ;
+- de consulter les KPI principaux ;
+- de naviguer dans une interface analytique claire, moderne et orientée métier.
+
+Le dashboard Streamlit a été pensé pour être :
+
+- lisible ;
+- professionnel ;
+- rapide à prendre en main ;
+- adapté à une démonstration devant un recruteur ou un stakeholder métier.
+
+## Stack technique
+
+Le projet mobilise plusieurs briques techniques complémentaires :
+
+- **Python** pour les traitements de données
+- **Pandas** pour la manipulation analytique
+- **PostgreSQL** pour les datamarts
+- **SQLAlchemy** pour la connexion aux données
+- **Streamlit** pour la visualisation interactive
+- **Plotly** pour les graphiques interactifs
+- **Docker / Docker Compose** pour l’exécution conteneurisée
+
+Selon l’implémentation complète, le projet peut également intégrer :
+
+- Spark pour les traitements distribués ;
+- FastAPI pour l’exposition de services ;
+- une organisation modulaire par couches Bronze / Silver / Gold.
+
+## Structure du projet
+
+```bash
+project/
+│
+├── data/
+│   ├── raw/
+│   ├── silver/
+│   └── gold/
+│
+├── api/
+│   └── routes/
+│
+├── viz/
+│   └── app.py
+│
+├── scripts/
+├── logs/
+├── requirements.txt
+├── docker-compose.yml
+└── README.md
+```
+
+## Installation
+
+### 1. Cloner le projet
+
+```bash
+git clone <url-du-repo>
+cd <nom-du-projet>
+```
+
+### 2. Créer un environnement virtuel
+
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+Sous Windows :
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Installer les dépendances
+
+```bash
+pip install -r requirements.txt
+```
+
+## Exécution du dashboard Streamlit
+
+Depuis la racine du projet ou depuis le dossier prévu :
+
+```bash
+streamlit run viz/app.py
+```
+
+Par défaut, Streamlit ouvre une interface locale accessible sur :
+
+```bash
+http://localhost:8501
+```
+
+## Exécution avec Docker
+
+Si le projet est conteneurisé avec Docker Compose :
+
+### Lancer les services
+
+```bash
+docker compose up -d --build
+```
+
+### Voir les logs du dashboard
+
+```bash
+docker logs -f apple_viz
+```
+
+### Redémarrer uniquement le dashboard
+
+```bash
+docker restart apple_viz
+```
+
+Ou avec Docker Compose :
+
+```bash
+docker compose restart apple_viz
+```
+
+### Arrêter les services
+
+```bash
+docker compose down
+```
+
+## Exemple de workflow du projet
+
+1. ingestion des données brutes dans la couche Bronze ;
+2. nettoyage et enrichissement dans la couche Silver ;
+3. création de datamarts analytiques dans la couche Gold ;
+4. préparation des variables utiles à la prédiction ;
+5. exposition et visualisation dans Streamlit ;
+6. interprétation métier pour les équipes marketing, commerciales et stratégiques.
+
+## Cas d’usage analytique
+
+Ce projet peut servir à :
+
+- explorer l’évolution historique de l’action Apple ;
+- comparer des périodes de marché ;
+- surveiller les indicateurs techniques ;
+- préparer des modèles de prédiction ;
+- alimenter des tableaux de bord d’aide à la décision ;
+- démontrer une architecture Big Data moderne dans un contexte réel.
+
+## Points forts du projet
+
+- architecture Médaillon claire et industrialisable ;
+- orientation Big Data et analytique ;
+- préparation robuste des données ;
+- variables techniques pertinentes pour la prédiction ;
+- visualisation professionnelle avec Streamlit ;
+- valeur métier explicite pour les équipes Apple ;
+- projet démonstratif solide pour un poste Data Analyst / Data Engineer / Analytics Engineer.
+
+## Perspectives d’amélioration
+
+Le projet peut être enrichi avec :
+
+- des modèles de machine learning plus avancés ;
+- une évaluation comparative de plusieurs algorithmes ;
+- des prévisions multi-horizons ;
+- des alertes automatiques sur signaux techniques ;
+- une API de scoring temps réel ;
+- des scénarios décisionnels pour les métiers.
+
+## Conclusion
+
+Apple Stock Intelligence Platform est un projet complet mêlant **Big Data**, **analyse financière**, **préparation de données**, **logique prédictive** et **visualisation professionnelle**.
+
+Il démontre la capacité à construire une chaîne analytique moderne de bout en bout, depuis la donnée brute jusqu’à l’aide à la décision, avec une forte attention portée à la structure de la donnée, à la lisibilité des résultats et à la valeur métier.
+
+Ce projet illustre une approche concrète de la donnée au service de la stratégie, avec un cas d’usage pertinent pour accompagner les équipes marketing, commerciales et décisionnelles d’Apple.
+
